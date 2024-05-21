@@ -1,9 +1,12 @@
+"use client"
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react'
 import { BsTwitterX } from "react-icons/bs"
 import { RiHome2Fill } from "react-icons/ri";
 
 export default function Sidebar() {
+    const { data: session } = useSession()
     return (
         <div className='flex flex-col gap-4 p-3 '>
             <div >
@@ -20,7 +23,19 @@ export default function Sidebar() {
                 <span className='font-bold hidden lg:inline'>Home</span>
             </Link>
 
-            <button className='bg-blue-500 text-white rounded-full hover:brightness-95 transition-all duration-200 w-48 h-9 shadow-md hidden lg:inline'>Sign In</button>
+            {session ? (
+                <button
+                    onClick={() => signOut()}
+                    className='bg-blue-500 text-white rounded-full hover:brightness-95 transition-all duration-200 w-48 h-9 shadow-md hidden lg:inline'>
+                    Sign Out
+                </button>
+            ) : (
+                <button
+                    onClick={() => signIn()}
+                    className='bg-blue-500 text-white rounded-full hover:brightness-95 transition-all duration-200 w-48 h-9 shadow-md hidden lg:inline'>
+                    Sign In
+                </button>
+            )}
         </div>
     )
 }
