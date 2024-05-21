@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import News from "@/components/News";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "../components/Sidebar";
+import News from "../components/News";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,13 +14,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex justify-between max-w-6xl mx-auto">
+        <div className="flex justify-between max-w-6xl mx-auto ">
+          <div className="hidden sm:inline h-screen border-r-2">
+            <Sidebar />
+          </div>
+
+          <div>{children}</div>
+
           <div>
             <News />
-          </div>
-          <div>{children}</div>
-          <div>
-            <Sidebar />
           </div>
         </div>
       </body>
