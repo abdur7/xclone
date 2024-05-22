@@ -6,8 +6,6 @@ export default function News() {
     const [news, setNews] = useState([])
     const [articleNum, setArticleNum] = useState(3)
 
-    console.log(news)
-
     useEffect(() => {
         fetch('https://saurav.tech/NewsAPI/top-headlines/category/business/us.json')
             .then(response => response.json())
@@ -15,7 +13,7 @@ export default function News() {
     }, [])
 
     return (
-        <div className='text-gray-700 space-y-3 bg-gray-100 rounded-xl pt2'>
+        <div className='text-gray-700 space-y-3 bg-gray-100 rounded-xl pt-2'>
             <h4 className='font-bold text-xl px-4'>Whats happening</h4>
             {
                 news.slice(0, articleNum).map((article) => (
