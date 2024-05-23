@@ -5,15 +5,18 @@ import { useEffect, useRef, useState } from "react"
 import { HiOutlinePhotograph } from "react-icons/hi"
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 import { app } from '../firebase'
+import { addDoc, getFirestore, collection, serverTimestamp } from 'firebase/firestore'
 
 export default function Input() {
     const { data: session } = useSession()
+    const db = getFirestore(app)
 
     const [imageFileURL, setImageFileURL] = useState(null)
     const [selectedFile, setSelectedFile] = useState(null)
     const [imageFileUploading, setImageFileUploading] = useState(false)
+    const [text, setText] = useState("")
+    const [postLoadings, setPostLoadings] = useState(false)
 
-    console.log(selectedFile)
     const imagePickRef = useRef()
 
     const addImageToPost = (e) => {
@@ -56,6 +59,25 @@ export default function Input() {
             uploadImageToStorage()
         }
     }, [selectedFile])
+
+    const handleSubmit = async () => {
+        setPostLoadings(true);
+        const docRef = await addDoc(collection(db, "posts"), {
+            uid: session.user.uid,
+            name: session.user.name,
+            username: session.user.username,
+            text,
+            profileImg: session.user.image,
+            image: imageFileURL,
+            timestamp: serverTimestamp()
+        });
+
+        setPostLoadings(false)
+        setImageFileURL(null)
+        setText("")
+        setSelectedFile(null)
+    }
+
     if (!session) return null
     return (
         <div className="flex border-b border-gray-200 p-3 space-x-3 w-full">
@@ -65,11 +87,13 @@ export default function Input() {
             />
             <div className="w-full divide-y divide-gray-200">
                 <textarea rows="2" placeholder="Whats happening"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
                     className="outline-none w-full border-none tracking-wide min-h-[50px] text-gray-700" />
                 {
                     selectedFile && (
                         <img src={imageFileURL} alt="post-image"
-                            className="w-full max-h-[250px] object-cover cursor-pointer"
+                            className={`w-full max-h-[250px] object-cover cursor-pointer ${imageFileUploading ? "animate-pulse" : ""}`}
                         />
                     )
                 }
@@ -80,7 +104,10 @@ export default function Input() {
                     />
                     <input type="file" hidden onChange={addImageToPost} ref={imagePickRef} accept="image/*" />
                     <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:brightness-90 shadow-md disabled:opacity-50">
+                        disabled={text.trim() === '' || imageFileUploading || postLoadings}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:brightness-90 shadow-md disabled:opacity-50"
+                        onClick={handleSubmit}
+                    >
                         Post
                     </button>
                 </div>
