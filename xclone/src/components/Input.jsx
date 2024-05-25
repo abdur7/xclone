@@ -72,10 +72,12 @@ export default function Input() {
             timestamp: serverTimestamp()
         });
 
+
         setPostLoadings(false)
         setImageFileURL(null)
         setText("")
         setSelectedFile(null)
+        location.reload();
     }
 
     if (!session) return null
