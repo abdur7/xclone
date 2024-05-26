@@ -3,7 +3,6 @@ import { HiDotsHorizontal } from 'react-icons/hi';
 import Icons from './Icons';
 
 export default function Post({ id, post }) {
-    console.log(post);
 
     return (
         <div className='flex p-3 border-b border-gray-200 hover:bg-gray-50'>
