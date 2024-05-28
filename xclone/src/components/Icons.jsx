@@ -24,6 +24,7 @@ export default function Icons({ id, uid }) {
     const db = getFirestore(app);
     const [open, setOpen] = useRecoilState(modalState)
     const [postId, setPostId] = useRecoilState(postIdState)
+    const [comments, setComments] = useState([])
 
 
     const likePost = async () => {
@@ -71,20 +72,37 @@ export default function Icons({ id, uid }) {
         }
     }
 
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'posts', id, 'comments'), (snapshot) => {
+            setComments(snapshot.docs);
+        });
+
+        return () => unsubscribe()
+    }, [db, id])
 
     return (
         <div className='flex justify-start gap-5 p-2 text-gray-500'>
-            <HiOutlineChat
-                onClick={() => {
-                    if (!session) {
-                        signIn()
-                    } else {
-                        setOpen(true)
-                        setPostId(id)
+            <div className='flex items-center'>
+
+                <HiOutlineChat
+                    onClick={() => {
+                        if (!session) {
+                            signIn()
+                        } else {
+                            setOpen(true)
+                            setPostId(id)
+                        }
                     }
+                    }
+                    className='h-8 w-8 cursor-pointer rounded-full  transition duration-500 ease-in-out p-2 hover:text-sky-500 hover:bg-sky-100' />
+                {
+                    comments.length > 0 && (
+                        <span className='text-xs'>
+                            {comments.length}
+                        </span>
+                    )
                 }
-                }
-                className='h-8 w-8 cursor-pointer rounded-full  transition duration-500 ease-in-out p-2 hover:text-sky-500 hover:bg-sky-100' />
+            </div>
 
             <div className='flex items-center'>
                 {isLiked ? (
