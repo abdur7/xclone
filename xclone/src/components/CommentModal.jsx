@@ -32,12 +32,7 @@ export default function CommentModal() {
             })
             return () => unsubscribe()
 
-        } else {
-            console.log("postid error")
         }
-
-
-
 
     }, [postId])
 
